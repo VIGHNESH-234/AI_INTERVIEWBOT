@@ -10,7 +10,6 @@ let questionCount = 0;
 let maxQuestions = 6; // Changed from 5 to 6
 let askedQuestions = []; // Stores {question: "...", userAnswer: "...", feedback: "..."}
 let waitingForNextQuestion = false;
-
 // Mock user database
 let users = JSON.parse(localStorage.getItem('interviewBotUsers') || '[]');
 
