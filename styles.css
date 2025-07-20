@@ -15,7 +15,6 @@
     --card-bg: rgba(255, 255, 255, 0.9);
     --btn-gradient: linear-gradient(135deg, var(--primary), var(--accent));
 }
-
 body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
