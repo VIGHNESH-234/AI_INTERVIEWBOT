@@ -1,14 +1,20 @@
 InterviewAce – AI Interview Coach 🧠💬
 
-**InterviewAce** is a web-based application that helps users prepare for interviews across multiple roles like Frontend, Backend, Full Stack, Data Analyst, DevOps, and Product Management.
+InterviewAce is a smart, voice-enabled web application designed to help users practice, improve, and gain confidence in their interview skills. It simulates real interview scenarios through interactive chat, voice input and output, and optional AI-powered responses — making preparation more dynamic, realistic, and effective.
 
-It includes:
-- Role-based static question sets 🎯
-- Voice input using Web Speech API 🎙️
-- Text-to-speech answers 🔊
-- OpenAI GPT integration (optional) 🤖
-- Light/Dark mode toggle 🌙☀️
-- Login/Register system (LocalStorage based) 🔐
+🎨 Frontend Developer
+
+⚙️ Backend Developer
+
+🔗 Full Stack Developer
+
+📊 Data Analyst
+
+🧪 DevOps Engineer
+
+🧭 Product Manager
+
+It blends traditional question sets with modern tech like speech recognition, text-to-speech, and AI-powered answers, creating a realistic and interactive interview experience — right in your browser.
 
 ---
 
