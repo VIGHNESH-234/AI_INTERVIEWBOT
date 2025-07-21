@@ -79,4 +79,14 @@ Just open the `index.html` file in your browser:
 
 This project is licensed for educational use.
 Feel free to fork and build on top of it!
+📈 Future Enhancements
+🧑‍💼 Mock Interview Mode – Schedule timed mock interviews with AI feedback
+
+📊 Performance Tracking – Visualize your improvement with progress charts
+
+🧠 Question Bank Expansion – Add more role-specific questions
+
+🌍 Multi-Language Support – Support for regional languages and accents
+
+🔄 Session Recording – Save and review previous interview sessions
 
