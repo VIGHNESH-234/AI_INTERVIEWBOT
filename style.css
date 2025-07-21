@@ -1,0 +1,35 @@
+:root {
+  --primary: #3A86FF;
+  --accent: #023E8A;
+  --success: #28a745;
+  --error: #dc3545;
+  --info: #17a2b8;
+  --text-color: #333;
+  --bg-light: #f0f4f8;
+  --white: #fff;
+  --card-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  --radius: 12px;
+  --bg-gradient: linear-gradient(-45deg, #ffc7d9, #aee2ff, #b9fbc0, #fff3a3);
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --btn-gradient: linear-gradient(135deg, var(--primary), var(--accent));
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  background: var(--bg-gradient);
+  background-size: 400% 400%;
+  animation: pastelFlow 20s ease infinite;
+  color: var(--text-color);
+}
+
+/* ... many rules omitted for brevity ... */
+
+body.dark {
+  --text-color: #f0f0f0;
+  --bg-gradient: linear-gradient(-45deg, #3A86FF, #8338ec, #ff006e, #00b4d8);
+  --card-bg: rgba(40, 40, 40, 0.85);
+  --btn-gradient: linear-gradient(135deg, #5c5cde, #3d3d9e);
+}
+
+/* ... additional rules for cards, buttons, role selection, chat, overlays, animations ... */
