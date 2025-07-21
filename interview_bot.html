@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InterviewAce - AI Interview Coach</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3A86FF;
+            --accent: #023E8A;
+            --success: #28a745;
+            --error: #dc3545;
+            --info: #17a2b8;
+            --text-color: #333;
+            --bg-light: #f0f4f8;
+            --white: #fff;
+            --card-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+
+            /* Light theme defaults */
+            --bg-gradient: linear-gradient(-45deg, #ffc7d9, #aee2ff, #b9fbc0, #fff3a3);
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --btn-gradient: linear-gradient(135deg, var(--primary), var(--accent));
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: var(--bg-gradient);
+            background-size: 400% 400%;
+            animation: pastelFlow 20s ease infinite;
+            color: var(--text-color);
+            overflow-y: auto;
+        }
+
+        body.dark {
+            --text-color: #f0f0f0;
+            --bg-gradient: linear-gradient(-45deg, #3A86FF, #8338ec, #ff006e, #00b4d8);
+            --card-bg: rgba(40, 40, 40, 0.85);
+            --btn-gradient: linear-gradient(135deg, #5c5cde, #3d3d9e);
+            --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .container {
+            background: var(--card-bg);
+            color: var(--text-color);
+            border-radius: var(--radius);
+            padding: 40px;
+            box-shadow: var(--card-shadow);
+            width: 90%;
+            max-width: 650px;
+            text-align: center;
+            margin: 40px 0;
+            overflow-y: auto;
+        }
+
+        .container p {
+            font-size: 1rem;
+            color: #4a4a4a;
+            margin-top: -15px;
+            margin-bottom: 20px;
+        }
+                
+        h1 {
+            color: var(--accent);
+            margin-bottom: 24px;
+            font-weight: 700;
+        }
+
+        .section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            margin-top: 20px;
+        }
+
+        .section.show {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Status Indicator */
+        .status-indicator {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            color: #fff;
+            z-index: 10;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .status-indicator.show {
+            display: block;
+            opacity: 1;
+        }
+        
+        .status-success { background-color: var(--success); }
+        .status-error { background-color: var(--error); }
+        .status-info { background-color: var(--info); }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input {
+            width: calc(100% - 20px);
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: var(--radius);
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .card-container {
+            perspective: 1200px;
+            width: 100%;
+            margin: auto;
+            position: relative;
+            height: 340px;
+            overflow-y: auto;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s ease;
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            backface-visibility: hidden;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 12px;
+            overflow-y: auto;
+        }
+
+        .card-front {
+            z-index: 2;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        input {
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            display: block;
+        }
+        
+        .btn {
+            background: var(--btn-gradient);
+            color: #fff;
+            padding: 12px 26px;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+            margin: 6px auto;
+            display: block;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .link-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 14px;
+            margin-top: 8px;
+            padding: 5px;
+        }
+
+        .toggle {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 6px 10px;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+        }
+
+        .toggle:focus {
+            outline: none;
+        }
+
+        .card-front h2, .card-back h2 {
+            font-size: 1.5rem !important;
+            font-weight: 600 !important;
+            color: #1e3a8a !important;
+            margin-bottom: 12px !important;
+        }
+
+        .hidden {
+            display: none !important;
+        } 
+
+        body.dark .container {
+            color: #f1f1f1;
+        }
+
+        body.dark .card-face {
+            color: #f1f1f1;
+        }
+
+        body.dark .card-face h2 {
+            color: #ffffff;
+        }
+        
+        body.dark .card-face p,
+        body.dark .card-face label {
+            color: #ddd;
+        }
+
+        body.dark input {
+            background: #1e1e2f;
+            color: #ffffff;
+            border: 1px solid #666;
+            caret-color: #ffffff;
+        }
+
+        body.dark input::placeholder {
+            color: #ccc;
+        }
+
+        body.dark .link-btn {
+            color: #91cfff;
+        }
+
+        body.dark h1, 
+        body.dark h2, 
+        body.dark p {
+            color: #f5f5f5;
+        }
+
+        body.dark button.btn {
+            text-shadow: 0 0 4px rgba(255, 255, 255, 0.2);
+        }
+        
+        body.dark .card-front h2,
+        body.dark .card-back h2 {
+            color: #ffffff !important;
+        }
+
+        /* Role Selection */
+        .role-selection {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .role-card {
+            background-color: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            width: 180px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .role-card:hover,
+        .role-card.selected {
+            border-color: var(--primary);
+            background-color: #e7f1ff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px);
+        }
+        
+        .role-card h3 {
+            margin-bottom: 10px;
+            color: var(--accent);
+            font-size: 1.1em;
+        }
+        
+        .role-card ul {
+            list-style: none;
+            padding: 0;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .role-card ul li {
+            margin-bottom: 4px;
+        }
+
+        .start-interview-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .api-key-input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        /* Model Selection */
+        .model-selection {
+            margin: 15px 0;
+        }
+
+        .model-selection select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+        }
+
+        body.dark .model-selection select {
+            background: #1e1e2f;
+            color: #ffffff;
+            border: 1px solid #666;
+        }
+
+        /* Chat Section */
+        .chat-container {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: var(--radius);
+            padding: 20px;
+            height: 450px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        #chatMessages {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            padding-right: 10px;
+            scroll-behavior: smooth;
+        }
+        
+        .message {
+            padding: 12px 18px;
+            border-radius: 20px;
+            max-width: 85%;
+            margin-bottom: 10px;
+            word-wrap: break-word;
+        }
+        
+        .message.user {
+            background: var(--primary);
+            color: #fff;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+            margin-left: auto;
+        }
+        
+        .message.bot {
+            background: #e2e6ea;
+            color: #333;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+            margin-right: auto;
+        }
+        
+        .input-group {
+            display: flex;
+            align-items: center;
+            border-top: 1px solid #e9ecef;
+            padding-top: 15px;
+            gap: 10px;
+        }
+        
+        .input-group input {
+            flex-grow: 1;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 25px;
+            font-size: 16px;
+            max-width: none;
+        }
+        
+        .input-group .btn {
+            border-radius: 25px;
+            padding: 10px 18px;
+            margin: 0;
+        }
+        
+        .api-key-info {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 0.85em;
+            text-align: left;
+        }
+
+        .api-key-info h4 {
+            margin-top: 0;
+            color: var(--accent);
+        }
+
+        .api-key-info ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .api-key-info li {
+            margin-bottom: 5px;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-top: 2px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .progress-indicator {
+            background: #f0f0f0;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .progress-bar {
+            background: var(--primary);
+            height: 6px;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+            margin-top: 5px;
+        }
+        
+        @keyframes pastelFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        body.dark .chat-container {
+            background: #2d2d2d;
+            border: 1px solid #555;
+        }
+
+        body.dark .message.bot {
+            background: #3a3a3a;
+            color: #f0f0f0;
+        }
+
+        body.dark .input-group input {
+            background: #1e1e2f;
+            color: #ffffff;
+            border: 1px solid #666;
+        }
+
+        body.dark .api-key-info {
+            background: #2d2d2d;
+            border: 1px solid #555;
+            color: #f0f0f0;
+        }
+
+        body.dark .role-card {
+            background-color: #3a3a3a;
+            border: 2px solid #555;
+            color: #f0f0f0;
+        }
+
+        body.dark .role-card:hover,
+        body.dark .role-card.selected {
+            background-color: #4a4a5a;
+        }
+
+        body.dark .role-card h3 {
+            color: #91cfff;
+        }
+
+        body.dark .role-card ul {
+            color: #ccc;
+        }
+
+        body.dark .progress-indicator {
+            background: #3a3a3a;
+            color: #f0f0f0;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 20px;
+                margin: 10px 0;
+            }
+
+            .role-card {
+                width: 100%;
+            }
+
+            .chat-container {
+                height: 400px;
+                padding: 15px;
+            }
+
+            .message {
+                padding: 10px 15px;
+            }
+
+            .input-group {
+                flex-wrap: wrap;
+            }
+
+            .input-group input {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .input-group .btn {
+                width: 30%;
+                margin: 0 1%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
+
+    <div class="container">
+        <div class="status-indicator hidden" id="statusMessage"></div>
+        
+        <section id="authSection" class="section show">
+            <h1>Welcome to InterviewAce!</h1>
+            <p>Your AI-powered interview coach.</p>
+
+            <div class="card-container">
+                <div class="card" id="flipCard">
+                    <!-- FRONT: Login -->
+                    <div class="card-face card-front">
+                        <h2>Login</h2>
+                        <input type="email" id="loginEmail" placeholder="Email" required>
+                        <input type="password" id="loginPassword" placeholder="Password" required>
+                        <button class="link-btn" onclick="handleForgotPassword()">Forgot password?</button>
+                        <button class="btn" onclick="login()">Login</button>
+                        <button class="link-btn" onclick="flipToRegister()">Don't have an account? Register here.</button>
+                    </div>
+
+                    <!-- BACK: Register -->
+                    <div class="card-face card-back">
+                        <h2>Register</h2>
+                        <input type="text" id="regName" placeholder="Name" required>
+                        <input type="email" id="regEmail" placeholder="Email" required>
+                        <input type="password" id="regPassword" placeholder="Password" required>
+                        <input type="text" id="regSecurityQuestion" placeholder="Security question (e.g. Your pet's name?)" required>
+                        <input type="text" id="regSecurityAnswer" placeholder="Your answer" required>
+                        <button class="btn" onclick="register()">Register</button>
+                        <button class="link-btn" onclick="flipToLogin()">Already have an account? Login here.</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="roleSection" class="section">
+            <h1>Choose Your Interview Focus</h1>
+            <p>Select a role to begin your tailored interview preparation.</p>
+
+            <div class="role-selection">
+                <div class="role-card" onclick="selectRole('Frontend Developer')">
+                    <h3>Frontend Developer</h3>
+                    <ul>
+                        <li>React/Vue/Angular</li>
+                        <li>HTML/CSS/JavaScript</li>
+                        <li>Responsive Design</li>
+                        <li>State Management</li>
+                        <li>Performance Optimization</li>
+                    </ul>
+                </div>
+                <div class="role-card" onclick="selectRole('Backend Developer')">
+                    <h3>Backend Developer</h3>
+                    <ul>
+                        <li>Node.js/Python/Java</li>
+                        <li>Databases</li>
+                        <li>APIs & Microservices</li>
+                        <li>System Architecture</li>
+                        <li>Security</li>
+                    </ul>
+                </div>
+                <div class="role-card" onclick="selectRole('Data Scientist')">
+                    <h3>Data Scientist</h3>
+                    <ul>
+                        <li>Machine Learning</li>
+                        <li>Statistics</li>
+                        <li>Python/R</li>
+                        <li>Data Analysis</li>
+                        <li>Model Evaluation</li>
+                    </ul>
+                </div>
+                <div class="role-card" onclick="selectRole('DevOps Engineer')">
+                    <h3>DevOps Engineer</h3>
+                    <ul>
+                        <li>CI/CD</li>
+                        <li>Docker/Kubernetes</li>
+                        <li>AWS/Azure/GCP</li>
+                        <li>Infrastructure</li>
+                        <li>Monitoring</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="start-interview-section">
+                <div class="form-group">
+                    <label for="apiKey">Enter your OpenAI API Key:</label>
+                    <input type="password" id="apiKey" class="api-key-input" placeholder="sk-proj-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" required>
+                    
+                    <div class="model-selection">
+                        <label for="modelSelect">Choose AI Model:</label>
+                        <select id="modelSelect">
+                            <option value="gpt-4o">GPT-4o (Recommended - Fast & Affordable)</option>
+                            <option value="gpt-4.1">GPT-4.1 (Latest - Best for Coding)</option>
+                            <option value="gpt-4.1-mini">GPT-4.1 Mini (Fastest & Cheapest)</option>
+                            <option value="gpt-4-turbo">GPT-4 Turbo (Legacy)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="api-key-info">
+                        <h4>🔑 How to get your OpenAI API Key:</h4>
+                        <ul>
+                            <li>Go to <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI API Keys</a></li>
+                            <li>Sign in to your OpenAI account</li>
+                            <li>Click "Create new secret key"</li>
+                            <li>Copy and paste the key above</li>
+                            <li><strong>Note:</strong> You need billing set up on your OpenAI account</li>
+                        </ul>
+                        <p><strong>⚠️ Important:</strong> Your API key is stored locally and never sent to our servers. It's only used to communicate directly with OpenAI.</p>
+                        <p><strong>💡 Model Info:</strong> GPT-4o is recommended for most users (fast and cost-effective). GPT-4.1 is the latest model with enhanced coding capabilities but costs more.</p>
+                    </div>
+                </div>
+                <button class="btn" onclick="startInterview()">Start Interview</button>
+                <button class="btn" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);" onclick="logout()">Logout</button>
+            </div>
+        </section>
+
+        <section id="chatSection" class="section">
+            <h1 id="chatTitle">Interview Preparation</h1>
+            
+            <div class="progress-indicator">
+                <div>Question <span id="currentQuestion">0</span> of <span id="totalQuestions">10</span></div>
+                <div class="progress-bar" id="progressBar" style="width: 0%;"></div>
+            </div>
+
+            <div class="chat-container">
+                <div id="chatMessages">
+                    <div class="message bot">Welcome! I'm your AI interview coach. Type 'start' to begin your practice interview, or ask me anything about your selected role!</div>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="userInput" placeholder="Type 'start' to begin or ask a question..." onkeypress="handleKeyPress(event)">
+                    <button class="btn" onclick="sendMessage()" id="sendButton">Send</button>
+                    <button class="btn" id="micButton" style="background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);" onclick="toggleVoiceInput()">🎙️</button>
+                    <button class="btn" id="speakToggleButton" style="background: linear-gradient(135deg, #673AB7 0%, #9C27B0 100%);" onclick="toggleSpeechOutput()">🔊</button>
+                </div>
+            </div>
+            <button class="btn" style="background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%); margin-top: 20px;" onclick="endInterview()">End Interview Session</button>
+        </section>
+    </div>
+
+    <script>
+        // Global state
+        let currentUser = null;
+        let selectedRole = null;
+        let apiKey = null;
+        let selectedModel = 'gpt-4o'; // Default to GPT-4o
+        let questionCount = 0;
+        let maxQuestions = 10;
+        let isInterviewMode = false;
+        let interviewContext = []; // Store conversation context
+
+        // Speech Recognition variables
+        let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
+        let isListening = false;
+
+        // Speech Synthesis variables
+        let synth = window.speechSynthesis;
+        let speechEnabled = true;
+        let voices = [];
+
+        function flipToRegister() {
+            document.getElementById('flipCard').classList.add('flipped');
+        }
+
+        function flipToLogin() {
+            document.getElementById('flipCard').classList.remove('flipped');
+        }
+        
+        function handleForgotPassword() {
+            const email = prompt("Enter your registered email:");
+            if (!email) return;
+
+            const userData = localStorage.getItem(email);
+            if (!userData) return alert("No account found with this email.");
+
+            const user = JSON.parse(userData);
+            const answer = prompt(`Security question:\n${user.question}`);
+
+            if (answer.toLowerCase().trim() === user.answer.toLowerCase().trim()) {
+                const newPassword = prompt("Correct! Enter your new password:");
+                if (newPassword) {
+                    user.password = newPassword;
+                    localStorage.setItem(email, JSON.stringify(user));
+                    alert("Password reset successful!");
+                }
+            } else {
+                alert("Incorrect answer. Cannot reset password.");
+            }
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const button = document.getElementById('themeToggle');
+
+            body.classList.toggle('dark');
+            const isDark = body.classList.contains('dark');
+            button.textContent = isDark ? '☀️' : '🌙';
+        }
+
+        function register() {
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const question = document.getElementById('regSecurityQuestion').value;
+            const answer = document.getElementById('regSecurityAnswer').value;
+
+            if (!name || !email || !password || !question || !answer) {
+                showStatus("Please fill in all fields.", "error");
+                return;
+            }
+
+            const user = { 
+                name, 
+                email, 
+                password, 
+                question, 
+                answer 
+            };
+
+            if (localStorage.getItem(email)) {
+                showStatus("User with this email already exists!", "error");
+                return;
+            }
+
+            localStorage.setItem(email, JSON.stringify(user));
+            alert("Registered successfully!");
+            flipToLogin();
+        }
+
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                showStatus('Please fill in all fields', 'error');
+                return;
+            }
+
+            const userData = localStorage.getItem(email);
+            if (!userData) {
+                showStatus('No account found with this email.', 'error');
+                return;
+            }
+
+            const user = JSON.parse(userData);
+            if (user.password !== password) {
+                showStatus('Invalid credentials', 'error');
+                return;
+            }
+
+            currentUser = user;
+            document.getElementById('authSection').classList.remove('show');
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('roleSection').classList.add('show');
+            
+            showStatus(`Welcome back, ${user.name}!`, 'success');
+        }
+
+        function logout() {
+            currentUser = null;
+            selectedRole = null;
+            apiKey = null;
+            selectedModel = 'gpt-4o';
+            questionCount = 0;
+            isInterviewMode = false;
+            interviewContext = [];
+            
+            // Clear role selection
+            document.querySelectorAll('.role-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            document.getElementById('roleSection').classList.remove('show');
+            document.getElementById('chatSection').classList.remove('show');
+            document.getElementById('authSection').classList.remove('hidden');
+            document.getElementById('authSection').classList.add('show');
+            
+            clearForm();
+            clearChatMessages();
+            showStatus('Logged out successfully.', 'success');
+            
+            if (isListening && recognition) {
+                recognition.stop();
+                isListening = false;
+                document.getElementById('micButton').style.background = 'linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%)';
+            }
+            if (synth.speaking) {
+                synth.cancel();
+            }
+        }
+
+        function clearForm() {
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('regName').value = '';
+            document.getElementById('regEmail').value = '';
+            document.getElementById('regPassword').value = '';
+            document.getElementById('regSecurityQuestion').value = '';
+            document.getElementById('regSecurityAnswer').value = '';
+            document.getElementById('apiKey').value = '';
+            document.getElementById('modelSelect').value = 'gpt-4o';
+        }
+
+        function selectRole(role) {
+            // Clear previous selection
+            document.querySelectorAll('.role-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            // Select current role
+            const selectedCard = event.currentTarget;
+            selectedCard.classList.add('selected');
+            
+            // Set the selected role globally
+            selectedRole = role;
+            console.log('Selected role:', selectedRole);
+        }
+
+        function startInterview() {
+            if (!selectedRole) {
+                showStatus('Please select an interview focus role.', 'error');
+                return;
+            }
+
+            const enteredApiKey = document.getElementById('apiKey').value.trim();
+            if (!enteredApiKey || !enteredApiKey.startsWith('sk-')) {
+                showStatus('Please enter a valid OpenAI API key (starts with sk-).', 'error');
+                return;
+            }
+
+            apiKey = enteredApiKey;
+            selectedModel = document.getElementById('modelSelect').value;
+
+            document.getElementById('roleSection').classList.remove('show');
+            document.getElementById('chatSection').classList.add('show');
+            document.getElementById('chatTitle').textContent = `Interview Preparation: ${selectedRole}`;
+            
+            clearChatMessages();
+            addMessage("bot", `Great! I'm ready to help you prepare for your ${selectedRole} interview using ${selectedModel.toUpperCase()}. I'll generate personalized questions using AI to give you the best practice experience. Type 'start' to begin the practice interview, or ask me anything about the role!`, true);
+            
+            // Reset interview state
+            questionCount = 0;
+            isInterviewMode = false;
+            interviewContext = [];
+            updateProgress();
+        }
+
+        function endInterview() {
+            if (confirm("Are you sure you want to end this interview session?")) {
+                // Reset interview state but keep role selection
+                questionCount = 0;
+                isInterviewMode = false;
+                interviewContext = [];
+                
+                document.getElementById('chatSection').classList.remove('show');
+                document.getElementById('roleSection').classList.add('show');
+                clearChatMessages();
+                showStatus('Interview session ended.', 'info');
+                
+                if (isListening && recognition) {
+                    recognition.stop();
+                    isListening = false;
+                    document.getElementById('micButton').style.background = 'linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%)';
+                }
+                if (synth.speaking) {
+                    synth.cancel();
+                }
+            }
+        }
+
+        function addMessage(sender, text, speak = false) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', sender);
+            messageDiv.innerHTML = text;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            if (speak && speechEnabled && sender === 'bot') {
+                speakText(text);
+            }
+        }
+
+        function clearChatMessages() {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = '';
+        }
+
+        function updateProgress() {
+            document.getElementById('currentQuestion').textContent = questionCount;
+            document.getElementById('totalQuestions').textContent = maxQuestions;
+            const progressPercentage = (questionCount / maxQuestions) * 100;
+            document.getElementById('progressBar').style.width = progressPercentage + '%';
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        async function sendMessage() {
+            const userInputField = document.getElementById('userInput');
+            const userText = userInputField.value.trim();
+
+            if (userText === '') return;
+
+            if (isListening && recognition) {
+                recognition.stop();
+                isListening = false;
+                document.getElementById('micButton').style.background = 'linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%)';
+            }
+            if (synth.speaking) {
+                synth.cancel();
+            }
+
+            addMessage('user', userText);
+            userInputField.value = '';
+
+            // Disable send button during processing
+            const sendButton = document.getElementById('sendButton');
+            sendButton.disabled = true;
+            sendButton.textContent = 'Processing...';
+
+            try {
+                if (userText.toLowerCase() === 'start') {
+                    if (!selectedRole) {
+                        addMessage('bot', "Please go back and select a role first before starting the interview.", true);
+                        return;
+                    }
+
+                    isInterviewMode = true;
+                    interviewContext = []; // Reset context for new interview
+                    await generateNextQuestion();
+                } else if (isInterviewMode && questionCount > 0) {
+                    // We're in interview mode and have asked a question, so evaluate the answer
+                    await evaluateAnswerAndContinue(userText);
+                } else {
+                    // General question mode
+                    await handleGeneralQuestion(userText);
+                }
+            } catch (error) {
+                console.error('Error processing message:', error);
+                addMessage('bot', 'Sorry, I encountered an error. Please try again. Make sure your API key is valid and you have sufficient credits.', true);
+            } finally {
+                sendButton.disabled = false;
+                sendButton.textContent = 'Send';
+            }
+        }
+
+        async function generateNextQuestion() {
+            if (!selectedRole || !apiKey) {
+                addMessage('bot', "Please make sure you've selected a role and provided an API key.", true);
+                return;
+            }
+
+            if (questionCount >= maxQuestions) {
+                addMessage('bot', "🎉 Congratulations! You've completed all the practice questions for this session! Great job! If you want to continue, you can start a new session or choose a different role.", true);
+                isInterviewMode = false;
+                return;
+            }
+
+            addMessage('bot', `<span class="loading"></span> Generating question ${questionCount + 1}...`);
+            const chatMessages = document.getElementById('chatMessages');
+            const loadingMessage = chatMessages.lastChild;
+
+            try {
+                // Create context for the AI about previous questions to avoid repetition
+                let contextPrompt = '';
+                if (interviewContext.length > 0) {
+                    contextPrompt = `\n\nPrevious questions asked in this session:\n${interviewContext.map((q, i) => `${i + 1}. ${q}`).join('\n')}\n\nPlease ask a DIFFERENT question that hasn't been covered yet.`;
+                }
+
+                const prompt = `
+                You are an expert technical interviewer conducting a ${selectedRole} interview. 
+                
+                Generate a realistic, challenging interview question that would be appropriate for a ${selectedRole} position. 
+                
+                The question should:
+                - Be specific and technical
+                - Test both knowledge and problem-solving skills
+                - Be at an intermediate to advanced level
+                - Be different from common textbook questions
+                - Require a detailed explanation, not just a yes/no answer
+                
+                ${contextPrompt}
+                
+                Respond with ONLY the interview question, nothing else. Make it sound natural as if you're asking it in person.
+                `;
+
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: selectedModel,
+                        messages: [
+                            {
+                                role: 'system',
+                                content: `You are an expert technical interviewer for ${selectedRole} positions. Generate challenging, realistic interview questions.`
+                            },
+                            {
+                                role: 'user',
+                                content: prompt
+                            }
+                        ],
+                        max_tokens: 200,
+                        temperature: 0.8
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    let errorMessage = `API request failed: ${response.status}`;
+                    
+                    if (response.status === 401) {
+                        errorMessage = "Invalid API key. Please check your OpenAI API key.";
+                    } else if (response.status === 429) {
+                        errorMessage = "Rate limit exceeded or insufficient credits. Please check your OpenAI account.";
+                    } else if (response.status === 404) {
+                        errorMessage = `Model ${selectedModel} not found. Try selecting a different model.`;
+                    } else if (errorData.error) {
+                        errorMessage = errorData.error.message || errorMessage;
+                    }
+                    
+                    throw new Error(errorMessage);
+                }
+
+                const data = await response.json();
+                const question = data.choices[0].message.content.trim();
+                
+                // Store the question in context to avoid repetition
+                interviewContext.push(question);
+                
+                loadingMessage.remove();
+                questionCount++;
+                updateProgress();
+                
+                addMessage('bot', `**Question ${questionCount}:** ${question}`, true);
+                
+            } catch (error) {
+                loadingMessage.remove();
+                console.error('Error generating question:', error);
+                addMessage('bot', `Sorry, I had trouble generating a question: ${error.message}`, true);
+                isInterviewMode = false;
+            }
+        }
+
+        async function evaluateAnswerAndContinue(userAnswer) {
+            if (interviewContext.length === 0) {
+                addMessage('bot', "I don't have a current question to evaluate. Please type 'start' to begin the interview.", true);
+                return;
+            }
+
+            const currentQuestion = interviewContext[interviewContext.length - 1];
+            
+            addMessage('bot', `<span class="loading"></span> Evaluating your answer...`);
+            const chatMessages = document.getElementById('chatMessages');
+            const loadingMessage = chatMessages.lastChild;
+
+            try {
+                const evaluationPrompt = `
+                You are an expert technical interviewer for ${selectedRole} positions.
+                
+                Question asked: "${currentQuestion}"
+                Candidate's answer: "${userAnswer}"
+                
+                Please provide a constructive evaluation that includes:
+                1. Overall assessment (2-3 sentences)
+                2. Strengths in their answer
+                3. Areas for improvement
+                4. A score out of 10
+                5. One specific tip for improvement
+                
+                Be encouraging but honest. Keep your response concise and helpful.
+                `;
+
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: selectedModel,
+                        messages: [
+                            {
+                                role: 'system',
+                                content: `You are an expert technical interviewer providing constructive feedback to candidates.`
+                            },
+                            {
+                                role: 'user',
+                                content: evaluationPrompt
+                            }
+                        ],
+                        max_tokens: 400,
+                        temperature: 0.7
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error?.message || `API request failed: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const evaluation = data.choices[0].message.content.trim();
+                
+                loadingMessage.remove();
+                addMessage('bot', evaluation, true);
+                
+                // Continue with next question if we haven't reached the limit
+                if (questionCount < maxQuestions) {
+                    setTimeout(() => {
+                        addMessage('bot', "Let's move on to the next question...", false);
+                        setTimeout(() => generateNextQuestion(), 1000);
+                    }, 3000);
+                } else {
+                    setTimeout(() => {
+                        addMessage('bot', "🎉 Congratulations! You've completed all the practice questions for this session! Great job! If you want to continue, you can start a new session or choose a different role.", true);
+                        isInterviewMode = false;
+                    }, 2000);
+                }
+                
+            } catch (error) {
+                loadingMessage.remove();
+                console.error('Error evaluating answer:', error);
+                addMessage('bot', `Sorry, I had trouble evaluating your answer: ${error.message}. Let's continue with the next question.`, true);
+                
+                // Continue anyway
+                if (questionCount < maxQuestions) {
+                    setTimeout(() => generateNextQuestion(), 2000);
+                } else {
+                    addMessage('bot', "🎉 You've completed the interview session!", true);
+                    isInterviewMode = false;
+                }
+            }
+        }
+
+        async function handleGeneralQuestion(userText) {
+            if (!selectedRole) {
+                addMessage('bot', "Please select a role first to get personalized answers about that field!", true);
+                return;
+            }
+
+            if (!apiKey || !apiKey.startsWith('sk-')) {
+                addMessage('bot', `That's a great question about ${selectedRole}! For detailed answers and personalized coaching, please provide a valid OpenAI API key. In the meantime, I can help you with practice questions - just type 'start' to begin!`, true);
+                return;
+            }
+
+            addMessage('bot', `<span class="loading"></span> Thinking...`);
+            const chatMessages = document.getElementById('chatMessages');
+            const loadingMessage = chatMessages.lastChild;
+
+            try {
+                const prompt = `
+                You are an expert ${selectedRole} interview coach. The candidate asked: "${userText}"
+                
+                Provide a helpful, detailed answer that would help them in their interview preparation. 
+                Keep it conversational and practical. Focus on actionable advice.
+                `;
+
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: selectedModel,
+                        messages: [
+                            {
+                                role: 'system',
+                                content: `You are an expert ${selectedRole} interview coach. Provide helpful, practical advice for interview preparation.`
+                            },
+                            {
+                                role: 'user',
+                                content: prompt
+                            }
+                        ],
+                        max_tokens: 400,
+                        temperature: 0.7
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error?.message || `API request failed: ${response.status}`);
+                }
+
+                const data = await response.json();
+                loadingMessage.remove();
+                addMessage('bot', data.choices[0].message.content, true);
+            } catch (error) {
+                loadingMessage.remove();
+                addMessage('bot', `I'd love to help with that question, but I'm having trouble connecting to the AI service: ${error.message}. Please check your API key or try again later. You can still practice with structured questions - just type 'start'!`, true);
+                console.error('API error:', error);
+            }
+        }
+
+        function showStatus(message, type) {
+            let statusDiv = document.getElementById('statusMessage');
+            if (!statusDiv) {
+                statusDiv = document.createElement('div');
+                statusDiv.classList.add('status-indicator');
+                statusDiv.id = 'statusMessage';
+                document.querySelector('.container').prepend(statusDiv);
+            }
+            statusDiv.textContent = message;
+            statusDiv.className = `status-indicator status-${type} show`;
+
+            setTimeout(() => {
+                statusDiv.classList.remove('show');
+            }, 5000);
+        }
+
+        // Voice Input Functions (Speech Recognition)
+        function initializeSpeechRecognition() {
+            if (!SpeechRecognition) {
+                showStatus("Speech recognition is not supported in your browser.", "error");
+                document.getElementById('micButton').disabled = true;
+                return;
+            }
+
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.lang = 'en-US';
+
+            recognition.onstart = function() {
+                isListening = true;
+                document.getElementById('userInput').placeholder = "Listening...";
+                document.getElementById('micButton').style.background = 'linear-gradient(135deg, #FF5722 0%, #FFC107 100%)';
+                showStatus("Listening for your answer...", "info");
+                if (synth.speaking) {
+                    synth.cancel();
+                }
+            };
+
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById('userInput').value = transcript;
+                isListening = false;
+                document.getElementById('micButton').style.background = 'linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%)';
+                document.getElementById('userInput').placeholder = "Type or speak your answer here...";
+            };
+
+            recognition.onerror = function(event) {
+                console.error("Speech recognition error:", event.error);
+                showStatus(`Speech recognition error: ${event.error}. Please try again.`, "error");
+                isListening = false;
+                document.getElementById('micButton').style.background = 'linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%)';
+                document.getElementById('userInput').placeholder = "Type or speak your answer here...";
+            };
+
+            recognition.onend = function() {
+                if (isListening) {
+                    isListening = false;
+                    document.getElementById('micButton').style.background = 'linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%)';
+                    document.getElementById('userInput').placeholder = "Type or speak your answer here...";
+                }
+            };
+        }
+
+        function toggleVoiceInput() {
+            if (!recognition) {
+                showStatus("Speech recognition is not available. Please try a different browser.", "error");
+                return;
+            }
+
+            if (isListening) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        }
+
+        // Text-to-Speech Functions (Speech Synthesis)
+        function initializeSpeechSynthesis() {
+            if (!synth) {
+                showStatus("Text-to-speech is not supported in your browser.", "error");
+                document.getElementById('speakToggleButton').disabled = true;
+                speechEnabled = false;
+                return;
+            }
+
+            synth.onvoiceschanged = () => {
+                voices = synth.getVoices();
+                console.log("Voices loaded:", voices);
+            };
+
+            if (synth.getVoices().length > 0) {
+                voices = synth.getVoices();
+                console.log("Voices immediately available:", voices);
+            }
+        }
+
+        function speakText(text) {
+            if (!speechEnabled || !synth) {
+                return;
+            }
+
+            // Remove HTML tags and markdown for better speech
+            const cleanedText = text.replace(/<[^>]*>/g, '').replace(/\*\*(.*?)\*\*/g, '$1').replace(/##\s*/g, '');
+
+            const utterance = new SpeechSynthesisUtterance(cleanedText);
+            utterance.lang = 'en-US';
+            utterance.volume = 1;
+            utterance.rate = 0.9;
+            utterance.pitch = 1;
+
+            utterance.onerror = (event) => {
+                console.error('Speech synthesis error:', event.error);
+            };
+
+            synth.speak(utterance);
+        }
+
+        function toggleSpeechOutput() {
+            speechEnabled = !speechEnabled;
+            const speakButton = document.getElementById('speakToggleButton');
+            if (speechEnabled) {
+                speakButton.style.background = 'linear-gradient(135deg, #673AB7 0%, #9C27B0 100%)';
+                speakButton.textContent = '🔊';
+                showStatus("Speech output enabled.", "info");
+            } else {
+                speakButton.style.background = 'linear-gradient(135deg, #9E9E9E 0%, #616161 100%)';
+                speakButton.textContent = '🔇';
+                if (synth.speaking) {
+                    synth.cancel();
+                }
+                showStatus("Speech output disabled.", "info");
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeSpeechRecognition();
+            initializeSpeechSynthesis();
+            updateProgress();
+
+            if (currentUser) {
+                document.getElementById('authSection').classList.add('hidden');
+                document.getElementById('roleSection').classList.add('show');
+                showStatus(`Welcome back, ${currentUser.name}!`, 'success');
+            } else {
+                document.getElementById('authSection').classList.remove('hidden');
+                document.getElementById('roleSection').classList.remove('show');
+                document.getElementById('chatSection').classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>
