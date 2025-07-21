@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>InterviewAce - AI Interview Coach</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <link href="styles.css" rel="stylesheet">
-
-    </head>
+    <link href="style.css" rel="stylesheet">
+</head>
 <body>
     <button class="toggle" id="themeToggle" style="position: absolute; top: 20px; right: 20px;" onclick="toggleTheme()">🌙</button>
 
@@ -20,6 +19,7 @@
 
             <div class="card-container">
                 <div class="card" id="flipCard">
+                    <!-- FRONT: Login -->
                     <div class="card-face card-front">
                         <h2>Login</h2>
                         <input type="email" id="loginEmail" placeholder="Email" required>
@@ -30,6 +30,7 @@
                         <button class="link-btn" onclick="flipToRegister()">Don't have an account? Register here.</button>
                     </div>
 
+                    <!-- BACK: Register -->
                     <div class="card-face card-back">
                         <h2>Register</h2>
                         <input type="text" id="regName" placeholder="Name" required>
@@ -101,12 +102,16 @@
                 <li>Roadmapping</li>
                 <li>User Stories</li>
                 <li>Metrics</li>
-                <li>Prioritization</li>
             </ul>
         </div>
     </div>
 
     <div class="start-interview-section">
+        <div class="form-group">
+            <label for="apiKey">Optional: Enter your OpenAI API Key (for advanced AI features):</label>
+            <input type="password" id="apiKey" class="api-key-input" placeholder="sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
+            <p style="font-size: 0.8em; color: #777;">*If left blank, a default key will be used for mock responses only.</p>
+        </div>
         <button class="btn" onclick="startInterview()">Start Interview</button>
         <button class="btn" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);" onclick="logout()">Logout</button>
     </div>
@@ -133,6 +138,7 @@
         </section>
     </div>
 
+    <!-- Confirmation dialog for ending interview -->
     <div id="confirmationDialog" class="confirmation-overlay" style="display: none;">
         <div class="confirmation-dialog">
             <h3 id="confirmationTitle">Confirm Ending Interview</h3>
@@ -144,6 +150,7 @@
         </div>
     </div>
 
+    <!-- Voice recording overlay -->
     <div id="voiceRecordingOverlay" class="voice-recording-overlay" style="display: none;">
         <div class="voice-recording-dialog">
             <div class="recording-mic" id="recordingMic">🎙️</div>
@@ -152,5 +159,6 @@
         </div>
     </div>
 
-    <script src="script.js"></script> </body>
+    <script src="script.js"></script>
+</body>
 </html>

@@ -4,7 +4,7 @@ let selectedRole = null;
 // IMPORTANT SECURITY NOTE: Embedding your API key directly in client-side JavaScript is highly insecure.
 // Anyone viewing your page's source code can see and steal your API key.
 // For a real-world application, you should always handle API calls from a secure backend server.
-const API_KEY_HARDCODED = "AIzaSyDcqTbS4MuAxb-byji2-OQz7EggJtPw3b8"; // Your provided API key
+const API_KEY_HARDCODED = "AIzaSyCo_eKfDgsiL9RofheJWS3Y8T5wl9LigEE"; // Your provided API keyAIzaSyBcYqjFyeHbFJqB4a8g1EK-rkS4kKju0Wk
 let apiKey = API_KEY_HARDCODED; // Initialize with the hardcoded key
 let questionCount = 0;
 let maxQuestions = 6; // Changed from 5 to 6
