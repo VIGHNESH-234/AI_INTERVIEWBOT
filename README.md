@@ -24,7 +24,7 @@ It blends traditional question sets with modern tech like speech recognition, te
 - 🧩 **Role-Based Questions** – Tailored interview questions for different domains
 - 🎙️ **Voice Input & Output** – Speak and listen to answers
 - 💬 **Chat Interface** – Simulates AI chat interaction
-- 🧠 **OpenAI API Support** – Optional GPT integration for dynamic answers
+- 🧠 **OpenAI API Support** – GPT integration for dynamic questions 
 - 🎨 **Responsive Design** – Works on mobile and desktop
 - 🌗 **Theme Toggle** – Switch between light and dark modes
 
@@ -35,7 +35,7 @@ It blends traditional question sets with modern tech like speech recognition, te
 - **HTML5, CSS3, JavaScript**
 - **Web Speech API** – for voice recognition and synthesis
 - **LocalStorage** – for user data
-- **OpenAI GPT (optional)** – for dynamic AI answers
+- **OpenAI GPT ** – for dynamic AI questions 
 
 ---
 
@@ -51,9 +51,9 @@ It blends traditional question sets with modern tech like speech recognition, te
 
 ---
 
-🤖 Optional: OpenAI Integration
+🤖 OpenAI Integration
 
-To use Gemini-based answers:
+To use chatgpt-based questions:
 
 1. Go to [https://platform.openai.com](https://platform.openai.com)
 2. Create an account and get your API key
