@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InterviewAce - AI Interview Coach</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+    <button class="toggle" id="themeToggle" style="position: absolute; top: 20px; right: 20px;" onclick="toggleTheme()">🌙</button>
+
+    <div class="container">
+        <div class="status-indicator hidden" id="statusMessage"></div>
+        
+        <section id="authSection" class="section show">
+            <h1>Welcome to InterviewAce!</h1>
+            <p>Your AI-powered interview coach.</p>
+
+            <div class="card-container">
+                <div class="card" id="flipCard">
+                    <!-- FRONT: Login -->
+                    <div class="card-face card-front">
+                        <h2>Login</h2>
+                        <input type="email" id="loginEmail" placeholder="Email" required>
+                        <input type="password" id="loginPassword" placeholder="Password" required>
+                        <button class="link-btn" onclick="handleForgotPassword()">Forgot password?</button>
+                        <button class="btn" onclick="login()">Login</button>
+                        <div id="loginError" class="error-message hidden"></div>
+                        <button class="link-btn" onclick="flipToRegister()">Don't have an account? Register here.</button>
+                    </div>
+
+                    <!-- BACK: Register -->
+                    <div class="card-face card-back">
+                        <h2>Register</h2>
+                        <input type="text" id="regName" placeholder="Name" required>
+                        <input type="email" id="regEmail" placeholder="Email" required>
+                        <input type="password" id="regPassword" placeholder="Password" required>
+                        <input type="text" id="regSecurityQuestion" placeholder="Security question (e.g. Your pet's name?)" required>
+                        <input type="text" id="regSecurityAnswer" placeholder="Your answer" required>
+                        <button class="btn" onclick="register()">Register</button>
+                        <button class="link-btn" onclick="flipToLogin()">Already have an account? Login here.</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+       <section id="roleSection" class="section">
+    <h1>Choose Your Interview Focus</h1>
+    <p>Select a role to begin your tailored interview preparation.</p>
+
+    <div class="role-selection">
+        <div class="role-card" onclick="selectRole('frontend')">
+            <h3>Frontend Developer</h3>
+            <ul>
+                <li>HTML/CSS</li>
+                <li>JavaScript</li>
+                <li>React/Vue/Angular</li>
+                <li>Responsive Design</li>
+            </ul>
+        </div>
+        <div class="role-card" onclick="selectRole('backend')">
+            <h3>Backend Developer</h3>
+            <ul>
+                <li>Node.js/Python/Java</li>
+                <li>APIs</li>
+                <li>Databases</li>
+                <li>Authentication</li>
+            </ul>
+        </div>
+        <div class="role-card" onclick="selectRole('fullstack')">
+            <h3>Full Stack Developer</h3>
+            <ul>
+                <li>Frontend & Backend</li>
+                <li>System Design</li>
+                <li>APIs</li>
+                <li>Databases</li>
+            </ul>
+        </div>
+        <div class="role-card" onclick="selectRole('dataanalyst')">
+            <h3>Data Analyst</h3>
+            <ul>
+                <li>SQL/Python</li>
+                <li>Data Visualization</li>
+                <li>Statistics</li>
+                <li>Excel</li>
+            </ul>
+        </div>
+        <div class="role-card" onclick="selectRole('devops')">
+            <h3>DevOps Engineer</h3>
+            <ul>
+                <li>CI/CD</li>
+                <li>Docker/Kubernetes</li>
+                <li>Cloud Services</li>
+                <li>Infrastructure</li>
+            </ul>
+        </div>
+        <div class="role-card" onclick="selectRole('productmanager')">
+            <h3>Product Manager</h3>
+            <ul>
+                <li>Market Research</li>
+                <li>Roadmapping</li>
+                <li>User Stories</li>
+                <li>Metrics</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="start-interview-section">
+        <div class="form-group">
+            <label for="apiKey">Optional: Enter your OpenAI API Key (for advanced AI features):</label>
+            <input type="password" id="apiKey" class="api-key-input" placeholder="sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
+            <p style="font-size: 0.8em; color: #777;">*If left blank, a default key will be used for mock responses only.</p>
+        </div>
+        <button class="btn" onclick="startInterview()">Start Interview</button>
+        <button class="btn" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);" onclick="logout()">Logout</button>
+    </div>
+</section>
+        <section id="chatSection" class="section">
+            <h1 id="chatTitle">Interview Preparation: Role Name</h1>
+            <div class="progress-text" id="progressText">Question 0/5</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+            </div>
+            
+            <div class="chat-container">
+                <div id="chatMessages">
+                    <div class="message bot">Welcome! I'm your AI interview coach. Let's start with some questions to help you prepare. Type 'start' to begin!</div>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="userInput" placeholder="Type or speak your answer here..." onkeypress="handleKeyPress(event)">
+                    <button class="btn" onclick="sendMessage()">Send</button>
+                    <button class="btn" id="micButton" style="background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);" onclick="startVoiceInput()">🎙️</button>
+                    <button class="btn" id="speakToggleButton" style="background: linear-gradient(135deg, #673AB7 0%, #9C27B0 100%);" onclick="toggleSpeechOutput()">🔊</button>
+                </div>
+            </div>
+            <button class="btn" style="background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%); margin-top: 20px;" onclick="endInterview()">End Interview Session</button>
+        </section>
+    </div>
+
+    <!-- Confirmation dialog for ending interview -->
+    <div id="confirmationDialog" class="confirmation-overlay" style="display: none;">
+        <div class="confirmation-dialog">
+            <h3 id="confirmationTitle">Confirm Ending Interview</h3>
+            <p id="confirmationMessage">Are you sure you want to end this interview session?</p>
+            <div class="confirmation-buttons">
+                <button class="confirm-btn" onclick="confirmEndInterview()">End Session</button>
+                <button class="cancel-btn" onclick="cancelEndInterview()">Continue Interview</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Voice recording overlay -->
+    <div id="voiceRecordingOverlay" class="voice-recording-overlay" style="display: none;">
+        <div class="voice-recording-dialog">
+            <div class="recording-mic" id="recordingMic">🎙️</div>
+            <p>Recording your answer...</p>
+            <button class="btn stop-recording-btn" onclick="stopVoiceInput()">Stop Recording</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
